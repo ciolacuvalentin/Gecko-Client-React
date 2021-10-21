@@ -9,7 +9,7 @@ const buildParams = (params) => {
   console.log(params);
   const arr = [];
   Object.keys(params).forEach((k) => {
-    if (params[k])arr.push(`${k}=${params[k]}`);
+    if (params[k]!==undefined)arr.push(`${k}=${params[k]}`);
   });
   return "?"+arr.join("&");
 };

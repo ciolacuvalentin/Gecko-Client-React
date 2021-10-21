@@ -7,14 +7,19 @@ import "./home.css";
 const Home = () => {
   const [list, setList] = useState([]);
   const [error, setError] = useState([]);
+  const [tablePageNo, setTablePageNo] = useState(1);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const getCoinsMarketParams = {
       vs_currency: "eur",
       per_page: 10,
+      page: tablePageNo,
     };
     async function fetchList() {
+      setLoading(true);
       const res = await getCoinsMarket(getCoinsMarketParams);
+      setLoading(false);
       if (res.data)
         setList(
           res.data.map((k) => {
@@ -30,26 +35,41 @@ const Home = () => {
         );
       else if (res.error) setError(res.error);
     }
+
     fetchList();
-  }, []);
+  }, [tablePageNo]);
   console.log(list);
 
   function buildTableHeaderData() {
     return list.length > 0 ? Object.keys(list[0]) : [];
   }
+  function handleNextTablePage() {
+    setTablePageNo((prev) => prev + 1);
+  }
 
+  function handlePrevTablePage() {
+    if (tablePageNo === 1) return;
+    setTablePageNo((prev) => prev - 1);
+  }
   //   function buildtableData() {
   //     return console.log("fadsgfdasg",Object.values(list))
   //     }
   return (
     <div className="p-5">
-      {list.length > 0 ? (
-        <TableComponent headerData={buildTableHeaderData()} tableData={list} />
-      ) : (
+      {loading ? (
         <Spinner
           animation="border"
           variant="primary"
           className="spinner-center"
+        />
+      ) : (
+        <TableComponent
+          headerData={buildTableHeaderData()}
+          tableData={list}
+          incrementPageNo={handleNextTablePage}
+          decrementPageNo={handlePrevTablePage}
+          decrementButtonDiseble={tablePageNo === 1}
+          pageNo={tablePageNo}
         />
       )}
     </div>
