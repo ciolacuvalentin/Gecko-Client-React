@@ -1,58 +1,44 @@
-import React, { useState } from "react";
-import { Table } from "react-bootstrap";
-import "./table.css";
-import { Pagination } from "react-bootstrap";
+import React, { useState } from 'react';
+import { Table } from 'react-bootstrap';
+import { Pagination } from 'react-bootstrap';
+import { Link } from "react-router-dom";
+import './table.css';
 
-const TableComponent = ({ headerData, tableData , decrementPageNo, incrementPageNo , pageNo=0, decrementButtonDiseble}) => {
+const TableComponent = ({ headerData, tableData, decrementPageNo, incrementPageNo, pageNo = 0, decrementButtonDisable = false, showPagination=true }) => {
   
-  const [row, setRow] = useState([]);
-
-    function getTableCellValue(value) {
-    if (typeof value === "string" && value.includes("http")) {
-      return (
-        <div className="imgTable">
-          <img src={value} alt="bitvoin icon" onLoad={()=>console.log("sdgdfsg")} />
-        </div>
-      );
+    const getTableRow = () => {
+        return tableData.map((rowObj, index) => {
+            return <tr key={"table-row-" + index}>
+                {headerData.map((v, index) => (<td key={v + index}>
+                    {v === 'image' ? <Link to={`/details/${rowObj.id}`}>
+                        <img src={rowObj[v]} width="50px" alt="bitcoin icon" onLoad={() => console.log("image loaded")} />
+                    </Link> : rowObj[v]}
+                </td>))}
+            </tr>
+        })
     }
-    return value;
-  }
 
-  function buildBody() {
-    return tableData.map((dataObj, index) => {
-      return (
-        <tr key={"CustomTable" + index}>
-          {Object.values(dataObj).map((dataValue, index) => (
-            <td key={dataValue + index}>{getTableCellValue(dataValue)}</td>
-          ))}
-        </tr>
-      );
-    });
-  }
-  return (
-    <div>
-        <div className="table-pagination">
-          <Pagination>
-              <Pagination.Prev onClick={decrementPageNo} disable={decrementButtonDiseble}/>
-              <Pagination.Item>{pageNo}</Pagination.Item>
-              <Pagination.Next onClick={incrementPageNo}/>
-          </Pagination>
-      </div>
-      <Table striped bordered hover variant="dark" responsive>
-        <thead>
-          <tr>
-            {headerData.map((th) => (
-              <th key={th} style={{ textTransform: "uppercase" }}>
-                {th}
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>{buildBody()}</tbody>
-      </Table>
-      
-    </div>
-  );
-};
+    return (
+        <div>
+            <Table striped bordered hover responsive>
+                <thead>
+                    <tr>
+                        {headerData.map(th => <th key={th} style={{ textTransform: 'uppercase' }}>{th}</th>)}
+                    </tr>
+                </thead>
+                <tbody>
+                    {getTableRow()}
+                </tbody>
+            </Table>
+            {showPagination && <div className="table-pagination">
+                <Pagination>
+                    <Pagination.Prev onClick={decrementPageNo} disabled={decrementButtonDisable} />
+                    <Pagination.Item>{pageNo}</Pagination.Item>
+                    <Pagination.Next onClick={incrementPageNo} />
+                </Pagination>
+            </div>}
+        </div>
+    )
+}
 
 export default TableComponent;

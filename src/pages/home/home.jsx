@@ -19,11 +19,12 @@ const Home = () => {
     async function fetchList() {
       setLoading(true);
       const res = await getCoinsMarket(getCoinsMarketParams);
-      setLoading(false);
+      
       if (res.data)
         setList(
           res.data.map((k) => {
             return {
+              id:k.id,
               image: k.image,
               name: k.name,
               symbol: k.symbol,
@@ -34,6 +35,7 @@ const Home = () => {
           })
         );
       else if (res.error) setError(res.error);
+      setLoading(false);
     }
 
     fetchList();
@@ -41,7 +43,7 @@ const Home = () => {
   console.log(list);
 
   function buildTableHeaderData() {
-    return list.length > 0 ? Object.keys(list[0]) : [];
+    return Object.keys(list[0]).filter(k=> k !== "id" );
   }
   function handleNextTablePage() {
     setTablePageNo((prev) => prev + 1);
@@ -56,22 +58,16 @@ const Home = () => {
   //     }
   return (
     <div className="p-5">
-      {loading ? (
-        <Spinner
-          animation="border"
-          variant="primary"
-          className="spinner-center"
-        />
-      ) : (
-        <TableComponent
+      {loading ? <Spinner animation="border" variant="primary" className="spinner-center"/>
+      : 
+        list.length > 0 ? <TableComponent
           headerData={buildTableHeaderData()}
           tableData={list}
           incrementPageNo={handleNextTablePage}
           decrementPageNo={handlePrevTablePage}
           decrementButtonDiseble={tablePageNo === 1}
-          pageNo={tablePageNo}
-        />
-      )}
+          pageNo={tablePageNo}/> : <div className="spinner-center">{error}</div>
+      }
     </div>
   );
 };

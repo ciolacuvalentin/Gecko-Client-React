@@ -14,13 +14,21 @@ const buildParams = (params) => {
   return "?"+arr.join("&");
 };
 
-export const getCoinsMarket = async (params) => {
+const validateParms =(params,reqParms)=>{
   let isValid = params !== undefined;
   if (params) {
     const paramsArray = Object.keys(params);
-    isValid = paramsArray.includes("vs_currency");
-  }
+    // isValid = paramsArray.includes(reqParms);
+    reqParms.forEach((rp)=>{
+      if(!paramsArray.includes(rp)){
+        isValid=false;
+      }
+    })
+  }return isValid
+}
+export const getCoinsMarket = async (params) => {
 
+const isValid=validateParms(params,["vs_currency"])
   if (isValid) {
     const parsedParams = buildParams(params);
     try{
@@ -36,3 +44,22 @@ export const getCoinsMarket = async (params) => {
       }
   }
 };
+
+export const getCoinDetails = async (subUrl, params) => {
+
+  if(subUrl){
+      const parsedParams = buildParams(params)
+      try{
+          const res = await instance.get(`/coins/${subUrl}${parsedParams}`);
+          return { data: res.data };
+      }
+      catch(error){
+          return { error }
+      }       
+  }  
+  else {
+      return {
+          error: 'Invalid call parameters'
+      }
+  }
+}
