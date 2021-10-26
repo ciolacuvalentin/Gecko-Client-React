@@ -4,7 +4,7 @@ import { Pagination } from 'react-bootstrap';
 import { Link } from "react-router-dom";
 import './table.css';
 
-const TableComponent = ({ headerData, tableData, decrementPageNo, incrementPageNo, pageNo = 0, decrementButtonDisable = false, showPagination=true }) => {
+const TableComponent = ({ headerData, tableData, decrementPageNo, incrementPageNo, pageNo = 0, decrementButtonDisable = false, showPagination=true ,containerClassName="" }) => {
   
     const getTableRow = () => {
         return tableData.map((rowObj, index) => {
@@ -19,8 +19,15 @@ const TableComponent = ({ headerData, tableData, decrementPageNo, incrementPageN
     }
 
     return (
-        <div>
-            <Table striped bordered hover responsive>
+        <div className={containerClassName}>
+           {showPagination && <div className="table-pagination">
+                <Pagination>
+                    <Pagination.Prev onClick={decrementPageNo} disabled={decrementButtonDisable} />
+                    <Pagination.Item>{pageNo}</Pagination.Item>
+                    <Pagination.Next onClick={incrementPageNo} />
+                </Pagination>
+            </div>}
+            <Table striped bordered hover variant="dark" responsive>
                 <thead>
                     <tr>
                         {headerData.map(th => <th key={th} style={{ textTransform: 'uppercase' }}>{th}</th>)}
@@ -30,13 +37,7 @@ const TableComponent = ({ headerData, tableData, decrementPageNo, incrementPageN
                     {getTableRow()}
                 </tbody>
             </Table>
-            {showPagination && <div className="table-pagination">
-                <Pagination>
-                    <Pagination.Prev onClick={decrementPageNo} disabled={decrementButtonDisable} />
-                    <Pagination.Item>{pageNo}</Pagination.Item>
-                    <Pagination.Next onClick={incrementPageNo} />
-                </Pagination>
-            </div>}
+           
         </div>
     )
 }

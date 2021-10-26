@@ -28,9 +28,9 @@ const Home = () => {
               image: k.image,
               name: k.name,
               symbol: k.symbol,
-              current_price: k.current_price,
-              high_24h: k.high_24h,
-              low_24h: k.low_24h,
+              current_price: `€ ${k.current_price}`,
+              high_24h: `€ ${k.high_24h}`,
+              low_24h: `€ ${k.low_24h}`,
             };
           })
         );

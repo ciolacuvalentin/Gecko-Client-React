@@ -5,7 +5,7 @@ const instance = axios.create({
   headers: { Accept: "application/json" },
 });
 const buildParams = (params) => {
-  if (params === undefined) return "--------------";
+  if (params === undefined) return "";
   console.log(params);
   const arr = [];
   Object.keys(params).forEach((k) => {
